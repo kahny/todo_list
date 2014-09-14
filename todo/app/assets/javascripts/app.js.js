@@ -7,7 +7,7 @@ TodoApp.config([
   "$routeProvider", "$locationProvider", function($routeProvider, $locationProvider) {
     $routeProvider.when('/', {
       templateUrl: "index.html",
-      controller: "TodoCtrl"
+      controller: "todo_items_controller"
     }).otherwise({
       redirectTo: "/"
     });
@@ -15,8 +15,42 @@ TodoApp.config([
   }
 ]);
 
-TodoApp.controller("TodoCtrl", [
+TodoApp.controller("todo_items_controller", [
   "$scope", "$http", function($scope, $http) {
-    return $scope.todo_items = [];
+    $scope.todo_items = [];
+    $scope.getItems = function() {
+      return $http.get("/todo_items.json").success(function(data) {
+        return $scope.todo_items = data;
+      });
+    };
+    $scope.getItems();
+    $scope.addItem = function() {
+      return $http.post("/todo_items.json", $scope.newItem).success(function(data) {
+        $scope.newItem = {};
+        return $scope.todo_items.push(data);
+      });
+    };
+    $scope.deleteItem = function(todo_item) {
+      return $http["delete"]("/todo_items/" + todo_item.id + ".json").success(function(data) {
+        var conf;
+        conf = confirm("Are you sure?");
+        if (conf) {
+          console.log("todo_item", todo_item);
+          return $scope.todo_items.splice($scope.todo_items.indexOf(todo_item), 1);
+        }
+      });
+    };
+    return $scope.editItem = function(todo_item) {
+      this.checked = false;
+      return $http.put("/todo_items/" + todo_item.id + ".json", todo_item).success(function(data) {
+        return console.log(data);
+      });
+    };
+  }
+]);
+
+TodoApp.config([
+  "$httpProvider", function($httpProvider) {
+    return $httpProvider.defaults.headers.common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content');
   }
 ]);

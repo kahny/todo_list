@@ -1,1 +1,21 @@
 <h1>TODO APP</h1>
+
+<!-- CREATE -->
+<!-- #review javascript:void -->
+<form action="javascript:void(0);" ng-submit="addItem()">
+	<input type="text" ng-model ="newItem.description" placeholder="task" autofocus required>
+	<button>Add Item</button>
+</form>
+
+<ul ng-repeat = "item in todo_items">
+	<!-- <p> Item # {{item.id}}</p> -->
+	<p>{{item.description}}</p>
+	<button ng-click = "deleteItem(item)">Delete</button>
+	<input type="checkbox" ng-model="checked1" id="editing{{$index}}"><label for="editing{{$index}}">Edit</label>
+	<form ng-submit = "editItem(item)" ng-show="checked1">
+		<input type="text" ng-model="item.description">
+		<button>Edit Task</button>
+	</form>
+</ul>
+
+

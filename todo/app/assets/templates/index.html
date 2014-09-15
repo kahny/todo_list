@@ -10,12 +10,14 @@
 <ul ng-repeat = "item in todo_items">
 	<!-- <p> Item # {{item.id}}</p> -->
 	<p>{{item.description}}</p>
-	<button ng-click = "deleteItem(item)">Delete</button>
-	<input type="checkbox" ng-model="checked1" id="editing{{$index}}"><label for="editing{{$index}}">Edit</label>
-	<form ng-submit = "editItem(item)" ng-show="checked1">
+	<!-- why does the value of the checkbox get evaluated after ng-click -->
+	<input type="checkbox" ng-model ="item.completed" ng-click="completedItem(item)"><label>Completed</label>
+	<input type="checkbox" ng-model="checked" id="editing{{$index}}"><label for="editing{{$index}}">Edit</label>
+	<form ng-submit = "editItem(item)" ng-show="checked">
 		<input type="text" ng-model="item.description">
 		<button>Edit Task</button>
 	</form>
+	<button ng-click = "deleteItem(item)">Delete</button>
 </ul>
 
 

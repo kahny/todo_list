@@ -7,7 +7,7 @@ TodoApp.config([
   "$routeProvider", "$locationProvider", function($routeProvider, $locationProvider) {
     $routeProvider.when('/', {
       templateUrl: "index.html",
-      controller: "todo_items_controller"
+      controller: "todo_items_controller1"
     }).otherwise({
       redirectTo: "/"
     });
@@ -15,7 +15,7 @@ TodoApp.config([
   }
 ]);
 
-TodoApp.controller("todo_items_controller", [
+TodoApp.controller("todo_items_controller1", [
   "$scope", "$http", function($scope, $http) {
     $scope.todo_items = [];
     $scope.getItems = function() {
@@ -25,26 +25,32 @@ TodoApp.controller("todo_items_controller", [
     };
     $scope.getItems();
     $scope.addItem = function() {
+      $scope.newItem.completed = false;
       return $http.post("/todo_items.json", $scope.newItem).success(function(data) {
         $scope.newItem = {};
         return $scope.todo_items.push(data);
       });
     };
     $scope.deleteItem = function(todo_item) {
-      return $http["delete"]("/todo_items/" + todo_item.id + ".json").success(function(data) {
-        var conf;
-        conf = confirm("Are you sure?");
-        if (conf) {
+      var conf;
+      conf = confirm("Are you sure?");
+      if (conf) {
+        return $http["delete"]("/todo_items/" + todo_item.id + ".json").success(function(data) {
           console.log("todo_item", todo_item);
           return $scope.todo_items.splice($scope.todo_items.indexOf(todo_item), 1);
-        }
-      });
+        });
+      }
     };
-    return $scope.editItem = function(todo_item) {
+    $scope.editItem = function(todo_item) {
       this.checked = false;
       return $http.put("/todo_items/" + todo_item.id + ".json", todo_item).success(function(data) {
         return console.log(data);
       });
+    };
+    return $scope.completedItem = function(todo_item) {
+      todo_item.completed = !todo_item.completed;
+      console.log(todo_item);
+      return $http.put("/todo_items/" + todo_item.id + ".json", todo_item).success(function(data) {});
     };
   }
 ]);

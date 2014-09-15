@@ -40,6 +40,6 @@ class TodoItemsController < ApplicationController
   end
 
   def todo_params
-    params.require(:todo_item).permit(:description)
+    params.require(:todo_item).permit(:description, :completed)
   end
 end

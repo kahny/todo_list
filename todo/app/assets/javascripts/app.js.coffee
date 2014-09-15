@@ -6,7 +6,7 @@ TodoApp.config ["$routeProvider", "$locationProvider", ($routeProvider, $locatio
 	$routeProvider
 		.when '/',
 			templateUrl: "index.html",
-			controller: "todo_items_controller" #taco with below
+			controller: "todo_items_controller1" #taco with below
 	.otherwise
 		redirectTo: "/"
 
@@ -19,24 +19,25 @@ TodoApp.config ["$routeProvider", "$locationProvider", ($routeProvider, $locatio
 
 
 #todo controller
-TodoApp.controller "todo_items_controller", ["$scope", "$http", ($scope, $http) ->
+TodoApp.controller "todo_items_controller1", ["$scope", "$http", ($scope, $http) ->
   $scope.todo_items = []
 
   $scope.getItems = ->
-  	#make a GET request to /todo_items.json
+  	# make a GET request to /todo_items.json
   	$http.get("/todo_items.json").success (data) ->
   		$scope.todo_items = data
   $scope.getItems()
 
   $scope.addItem = ->
+  	$scope.newItem.completed = false
   	$http.post("/todo_items.json", $scope.newItem).success (data) ->
   		$scope.newItem = {}
   		$scope.todo_items.push(data)
 
   $scope.deleteItem = (todo_item) ->
-  	$http.delete("/todo_items/#{todo_item.id}.json").success (data) ->
-  		conf = confirm "Are you sure?"
-  		if conf
+  	conf = confirm "Are you sure?"
+  	if conf
+  		$http.delete("/todo_items/#{todo_item.id}.json").success (data) ->
   			console.log("todo_item",todo_item)
   			$scope.todo_items.splice($scope.todo_items.indexOf(todo_item),1)
 
@@ -44,6 +45,14 @@ TodoApp.controller "todo_items_controller", ["$scope", "$http", ($scope, $http) 
   	this.checked = false
   	$http.put("/todo_items/#{todo_item.id}.json", todo_item).success (data) ->
   		console.log(data)
+
+  $scope.completedItem = (todo_item) ->
+  	# todo_item.completed
+
+  	todo_item.completed = !todo_item.completed
+  	console.log(todo_item)
+  	$http.put("/todo_items/#{todo_item.id}.json", todo_item).success (data) ->
+
 
 ]
 
